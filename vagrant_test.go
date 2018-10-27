@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hashicorp/go-version"
+	version "github.com/hashicorp/go-version"
 	"github.com/koding/logging"
 )
 
@@ -160,6 +160,31 @@ func TestHalt(t *testing.T) {
 	}
 
 	testOutput(t, "vagrant halt", out)
+
+	status, err := vg.Status()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if status != PowerOff {
+		t.Errorf("Vagrant status should be: %s. Got: %s", PowerOff, status)
+	}
+}
+
+func TestPowerOff(t *testing.T) {
+	out, err := vg.Up()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	testOutput(t, "vagrant up", out)
+
+	out, err = vg.PowerOff()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	testOutput(t, "vagrant halt --force", out)
 
 	status, err := vg.Status()
 	if err != nil {
